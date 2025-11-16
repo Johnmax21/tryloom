@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fafafa;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .card {
+            background-color: white;
+            width: 30%;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        .card-body {
+            padding: 15px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .price {
+            color: #e60000;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #777;
+            margin-left: 10px;
+            font-size: 16px;
+        }
+        .details {
+            margin: 10px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .stock {
+            font-size: 14px;
+            color: green;
+        }
+        .out-of-stock {
+            color: red;
+            
+        }
+        
+.heart-icon {
+    font-size: 24px;
+    transition: color 0.3s;
+}
+.heart-icon:hover {
+    color: #ff4d4d;
+}
+
+
+    </style>
+</head>
+<body>
+
+<h1>Our Products</h1>
+
+<div class="container">
+    {% for product in products %}
+        <div class="card">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <img src="https://via.placeholder.com/300x250.png?text=No+Image" alt="No Image">
+            {% endif %}
+            <div class="card-body">
+                <div class="card-title">{{ product.name }}</div>
+
+                <div class="price">
+                    ₹{{ product.offer_price|default:product.price }}
+                    {% if product.offer_price %}
+                        <span class="original-price">₹{{ product.price }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="details">
+                    <strong>Code:</strong> {{ product.code }}<br>
+                    <strong>Size:</strong> {{ product.size|default:"N/A" }}<br>
+                    <strong>Color:</strong> {{ product.color|default:"N/A" }}<br>
+                    <strong>Category:</strong> {{ product.category|default:"N/A" }}<br>
+                    <strong>Fabric:</strong> {{ product.fabric|default:"N/A" }}
+                </div>
+
+                <div class="stock">
+                    {% if product.stock > 0 %}
+                        In Stock ({{ product.stock }})
+                    {% else %}
+                        <span class="out-of-stock">Out of Stock</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'add_cart' product.id %}">
+    <button style="
+        background-color: #007bff;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    ">
+        Add to Cart
+    </button>
+</a>
+<!-- Wishlist Heart Icon -->
+<span class="wishlist-icon" data-product-id="{{ product.id }}" style="cursor: pointer;">
+    {% if user.is_authenticated and product in user_wishlist %}
+        <span class="heart-icon" style="color: red;">&#10084;</span>  <!-- filled heart -->
+    {% else %}
+        <span class="heart-icon" style="color: gray;">&#9825;</span>  <!-- empty heart -->
+    {% endif %}
+</span>
+
+            </div>
+        </div>
+    {% empty %}
+        <p>No products found.</p>
+    {% endfor %}
+</div>
+<script>
+document.querySelectorAll('.wishlist-icon').forEach(icon => {
+    icon.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        const heart = this.querySelector('.heart-icon');
+
+        fetch("{% url 'toggle_wishlist' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'product_id=' + productId
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'added') {
+                heart.innerHTML = '&#10084;'; // filled heart
+                heart.style.color = 'red';
+            } else if (data.status === 'removed') {
+                heart.innerHTML = '&#9825;'; // empty heart
+                heart.style.color = 'gray';
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>

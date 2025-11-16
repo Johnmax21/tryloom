@@ -1,0 +1,101 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50">
+
+<section class="max-w-7xl mx-auto px-6 py-6">
+
+    <!-- Breadcrumb -->
+    <p class="text-sm text-gray-500 mb-4">
+        Home / <span class="text-black">Products</span>
+    </p>
+
+    <!-- Filter / Sort -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-4">
+
+            <!-- Filter Button -->
+            <button class="flex items-center gap-2 border px-4 py-2 rounded-lg shadow-sm bg-white hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" 
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 
+                        01-.293.707L15 12.586V19a1 1 0 01-.553.894l-4 2A1 1 0 
+                        019 21v-8.414L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                Filter
+            </button>
+
+        </div>
+
+        <!-- Sort Dropdown -->
+        <form method="GET">
+            <select name="sort" onchange="this.form.submit()" 
+               class="border px-3 py-2 rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-black">
+                <option value="">Featured</option>
+                <option value="low">Price: Low to High</option>
+                <option value="high">Price: High to Low</option>
+            </select>
+        </form>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+
+        {% for p in products %}
+        <a href="{% url 'product_details' p.id %}"
+           class="group bg-white shadow-md rounded-xl overflow-hidden transition-all
+                  duration-300 hover:scale-[1.03] hover:shadow-xl block relative">
+
+            <!-- Offer Tag -->
+            {% if p.offer_price %}
+                {% with discount=p.price|floatformat:0|add:"-"|floatformat:0 %}
+                <span class="absolute top-3 left-3 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded">
+                    ₹{{ p.price|floatformat:0|add:"-"|floatformat:0 }}
+                </span>
+                {% endwith %}
+            {% endif %}
+
+            <!-- Image -->
+            <div class="overflow-hidden">
+                <img src="{{ p.image.url }}"
+                     alt="{{ p.name }}"
+                     class="w-full h-72 object-cover transition-transform duration-500 group-hover:scale-110">
+            </div>
+
+            <!-- Info -->
+            <div class="p-4 text-center">
+                <h3 class="text-lg font-semibold truncate">{{ p.name }}</h3>
+
+                <!-- Price -->
+                {% if p.offer_price %}
+                    <p class="text-gray-900 font-bold text-lg">₹ {{ p.offer_price }}</p>
+                    <p class="text-gray-500 line-through text-sm">₹ {{ p.price }}</p>
+                {% else %}
+                    <p class="text-gray-900 font-bold text-lg">₹ {{ p.price }}</p>
+                {% endif %}
+
+                <!-- Stock -->
+                {% if p.stock > 0 %}
+                    <p class="text-green-600 text-xs mt-1">In Stock</p>
+                {% else %}
+                    <p class="text-red-500 text-xs mt-1">Out of Stock</p>
+                {% endif %}
+            </div>
+
+        </a>
+        {% endfor %}
+
+    </div>
+
+</section>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice - Tryloom Fabrics</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: #fff;
+      color: #333;
+    }
+
+    .invoice-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border: 1px solid #eee;
+      box-shadow: 0 0 10px rgba(0,0,0,.15);
+      line-height: 24px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #666;
+      margin: 0;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+
+    .invoice-details p {
+      margin: 2px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    table th {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
+
+    .total-row td {
+      font-weight: bold;
+    }
+
+    .grand-total {
+      text-align: right;
+      font-size: 16px;
+      font-weight: bold;
+      background: #ddd;
+      padding: 10px;
+    }
+
+    .payment-info {
+      margin-top: 20px;
+    }
+
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 12px;
+      color: #777;
+    }
+
+    .email {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .email img {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-box">
+    <div class="invoice-header">
+      <div>
+        <h1>INVOICE</h1>
+        <p>Number: 01234</p>
+        <p>Date: July 03, 2023</p>
+      </div>
+      <div class="invoice-details">
+        <p><strong>Issued to:</strong></p>
+        <p>Morgan Maxwell</p>
+        <p>123 Anywhere St., Any</p>
+        <p>City, ST 12345</p>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Description</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Basic Hoodie</td>
+          <td>2</td>
+          <td>Rs 100</td>
+          <td>Rs 200</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Black Short</td>
+          <td>4</td>
+          <td>Rs 200</td>
+          <td>Rs 800</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>White Dress</td>
+          <td>2</td>
+          <td>Rs 50</td>
+          <td>Rs 100</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Red Hoodie</td>
+          <td>4</td>
+          <td>Rs 200</td>
+          <td>Rs 800</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grand-total">
+      GRAND TOTAL: Rs 1900
+    </div>
+
+    <div class="payment-info">
+      <h3>Payment Information</h3>
+      <p><strong>Bank Name:</strong> Tryloom Fabrics</p>
+    </div>
+
+    <div class="footer">
+      <div class="email">
+        <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="email">
+        <span>Tryloomfabrics@gmail.com</span>
+      </div>
+      <p><strong>TRYLOOM FABRICS</strong></p>
+    </div>
+  </div>
+</body>
+</html>

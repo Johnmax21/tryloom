@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TryLoom Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+
+   
+  .slider {
+    width: 100%;
+    height: 250px;
+  }
+  .slides img {
+    object-fit: cover;
+    width: 100%;
+    height: 250px;
+  }
+
+    /* Banner Slider */
+    .slider {
+      width: 100%;
+      height: 600px;
+      position: relative;
+      overflow: hidden;
+    }
+    .slides {
+      display: flex;
+      width: 300%;
+      height: 100%;
+      animation: slide 12s infinite;
+    }
+    .slides img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    @keyframes slide {
+      0% { transform: translateX(0%); }
+      33% { transform: translateX(-100%); }
+      66% { transform: translateX(-200%); }
+      100% { transform: translateX(0%); }
+    }
+
+    /* 🔥 Search Overlay Animations (Myntra Style) */
+    #searchOverlay {
+      display: none;
+      backdrop-filter: blur(3px);
+    }
+    #searchBox {
+      transform: translateY(-30px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    #searchOverlay.active {
+      display: flex;
+    }
+    #searchOverlay.active #searchBox {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body class="bg-white text-gray-900">
+
+  <!-- ===================================== -->
+  <!-- SEARCH OVERLAY (Myntra Style) -->
+  <!-- ===================================== -->
+  <div id="searchOverlay" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-start justify-center p-6">
+
+    <div id="searchBox" class="bg-white w-full max-w-3xl rounded-lg shadow-lg p-5 relative">
+
+      <!-- Close Button -->
+      <button onclick="closeSearch()" class="absolute top-4 right-4 text-gray-600 hover:text-black">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+
+      <!-- Title -->
+      <h2 class="text-lg font-semibold mb-4">What are you looking for?</h2>
+
+      <!-- Search Form -->
+   <form action="{% url 'search' %}" method="GET"
+      class="flex items-center bg-gray-100 rounded-full px-4 py-2 shadow-sm hover:shadow transition">
+
+    <i data-lucide="search" class="w-5 h-5 text-gray-500 mr-3"></i>
+
+    <input
+        type="text"
+        name="q"
+        placeholder="Search for products, brands and more"
+        class="flex-grow bg-transparent outline-none text-gray-700 placeholder-gray-500"
+        autofocus
+        required
+    />
+</form>
+
+
+    </div>
+
+  </div>
+
+  <script>
+    function openSearch() {
+      const overlay = document.getElementById("searchOverlay");
+      overlay.classList.add("active");
+      lucide.createIcons();
+    }
+
+    function closeSearch() {
+      document.getElementById("searchOverlay").classList.remove("active");
+    }
+  </script>
+
+
+  <!-- ===================================== -->
+  <!-- NAVBAR -->
+  <!-- ===================================== -->
+  <nav class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="max-w-screen-xl mx-auto flex items-center justify-between py-6 px-10">
+
+      <!-- Left - Logo -->
+      <div>
+        <a href="/">
+          <img src="/static/logo.png" class="w-[65px] h-[65px]" />
+        </a>
+      </div>
+
+      <!-- Middle Menu -->
+      <ul class="flex space-x-10 text-sm font-semibold">
+        <li><a href="{% url 'product_list' %}?category=special" class="hover:text-gray-600">SPECIAL COLLECTION</a></li>
+        <li><a href="{% url 'product_list' %}?category=cord" class="hover:text-gray-600">KURTIS</a></li>
+        <li><a href="{% url 'product_list' %}?category=short" class="hover:text-gray-600">JEWELLERY</a></li>
+      </ul>
+
+      <!-- Right Icons -->
+      <div class="flex space-x-6">
+
+        <!-- Search -->
+        <div class="relative group">
+          <button onclick="openSearch()">
+            <i data-lucide="search" class="w-6 h-6 cursor-pointer"></i>
+          </button>
+          <span class="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition bg-white text-gray-700 px-2 py-1 rounded shadow text-sm">
+            Search
+          </span>
+        </div>
+
+        <!-- Account -->
+      <div class="relative group">
+    {% if is_logged_in %}
+        <!-- If logged in → go to profile -->
+        <a href="/profile/">
+            <i data-lucide="user" class="w-6 h-6 cursor-pointer"></i>
+        </a>
+        <span class="absolute -top-8 left-1/2 -translate-x-1/2 scale-0
+                     group-hover:scale-100 transition bg-white text-gray-700 
+                     px-2 py-1 rounded shadow text-sm">
+            Profile
+        </span>
+    {% else %}
+        <!-- If NOT logged in → show login/register -->
+        <a href="/login/">
+            <i data-lucide="user" class="w-6 h-6 cursor-pointer"></i>
+        </a>
+        <span class="absolute -top-8 left-1/2 -translate-x-1/2 scale-0
+                     group-hover:scale-100 transition bg-white text-gray-700 
+                     px-2 py-1 rounded shadow text-sm">
+            Login
+        </span>
+    {% endif %}
+</div>
+
+
+        <!-- Favorite -->
+        <div class="relative group">
+          <a href="/wishlist/">
+            <i data-lucide="heart" class="w-6 h-6 cursor-pointer"></i>
+          </a>
+          <span class="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition bg-white text-gray-700 px-2 py-1 rounded shadow text-sm">
+            Favorite
+          </span>
+        </div>
+
+        <!-- Cart -->
+        <div class="relative group">
+          <a href="/cart_list/">
+            <i data-lucide="shopping-cart" class="w-6 h-6 cursor-pointer"></i>
+          </a>
+          <span class="absolute -top-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition bg-white text-gray-700 px-2 py-1 rounded shadow text-sm">
+            Cart
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+  </nav>
+
+  <script> lucide.createIcons(); </script>
+
+
+  <!-- ===================================== -->
+  <!-- BANNER SECTION -->
+  <!-- ===================================== -->
+<div class="slider mt-4 relative w-full overflow-hidden">
+  <div class="slides flex transition-transform duration-700 ease-in-out">
+    <img src="/static/banner1.jpg" class="w-full flex-shrink-0" />
+    <img src="/static/banner2.jpg" class="w-full flex-shrink-0" />
+    <img src="/static/banner3.jpg" class="w-full flex-shrink-0" />
+  </div>
+</div>
+
+
+
+  <!-- ===================================== -->
+  <!-- PRODUCT SECTION -->
+  <!-- ===================================== -->
+  <section class="max-w-7xl mx-auto py-10">
+    <h2 class="text-3xl font-bold mb-8 text-center">Products</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
+        {% for product in products %}
+        <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition">
+
+            <img src="{{ product.image.url }}" class="h-48 w-full object-cover" />
+
+            <div class="p-4 text-left">
+                <h3 class="text-lg font-semibold">{{ product.name }}</h3>
+
+                {% if product.offer_price %}
+                    <p class="text-green-600 font-bold text-xl">₹{{ product.offer_price }}</p>
+                    <p class="line-through text-gray-500 text-sm">₹{{ product.price }}</p>
+                {% else %}
+                    <p class="text-gray-700 font-bold text-xl">₹{{ product.price }}</p>
+                {% endif %}
+
+                <p class="text-gray-500 text-sm">Size: {{ product.size }}</p>
+                <p class="text-gray-500 text-sm">Color: {{ product.color }}</p>
+
+                <a href="/product_details/{{ product.id }}/"
+                   class="mt-3 inline-block w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition">
+                    View Details
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 col-span-full text-center">No products available</p>
+        {% endfor %}
+    </div>
+  </section>
+
+
+  <!-- ===================================== -->
+  <!-- FEATURES SECTION -->
+  <!-- ===================================== -->
+  <section class="text-white py-10" style="background-color: #444676;">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+
+      <div class="flex flex-col items-center">
+        <i data-lucide="truck" class="w-10 h-10 text-white"></i>
+        <h4 class="mt-4 font-bold text-sm uppercase">FREE SHIPPING & RETURN</h4>
+        <p class="text-sm">Free shipping on all Indian orders</p>
+      </div>
+
+      <div class="flex flex-col items-center">
+        <i data-lucide="badge-dollar-sign" class="w-10 h-10 text-white"></i>
+        <h4 class="mt-4 font-bold text-sm uppercase">MONEY GUARANTEE</h4>
+        <p class="text-sm">7-Day Exchange Available | No Cash Refunds</p>
+      </div>
+
+      <div class="flex flex-col items-center">
+        <i data-lucide="headset" class="w-10 h-10 text-white"></i>
+        <h4 class="mt-4 font-bold text-sm uppercase">ONLINE SUPPORT</h4>
+        <p class="text-sm">We support online 24/7 on day</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================================== -->
+  <!-- FOOTER -->
+  <!-- ===================================== -->
+  <footer class="bg-gray-900 text-white py-10 mt-12">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
+
+      <div>
+        <h4 class="font-semibold mb-2">DISCOVER</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:underline">About Us</a></li>
+          <li>My Account</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-2">QUICK SHOP</h4>
+        <ul class="space-y-2">
+          <li><a href="#">jewellery</a></li>
+          <li><a href="#"> Kurtis</a></li>
+         
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-2">INFORMATION</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:underline">Returns & Refunds Policy</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-2">CONTACT US</h4>
+        <p>Phone: +91 6000000000</p>
+        <p>Email: tryloomfabrics@gmail.com</p>
+      </div>
+
+    </div>
+  </footer>
+<script>
+  let currentIndex = 0;
+  const slider = document.querySelector('.slider');
+  const slides = document.querySelector('.slides');
+  const totalSlides = slides.children.length;
+
+  let autoSlide;
+
+  function startSlide() {
+    autoSlide = setInterval(() => {
+      currentIndex = (currentIndex + 1) % totalSlides;
+      slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }, 3000);
+  }
+
+  function stopSlide() {
+    clearInterval(autoSlide);
+  }
+
+  // Start autoplay
+  startSlide();
+
+  // Pause on hover (desktop)
+  slider.addEventListener('mouseenter', stopSlide);
+  slider.addEventListener('mouseleave', startSlide);
+
+  // Pause on touch (mobile)
+  slider.addEventListener('touchstart', stopSlide);
+  slider.addEventListener('touchend', startSlide);
+</script>
+
+</body>
+</html>

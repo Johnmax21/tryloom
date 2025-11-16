@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User List</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        img { height: 50px; width: 50px; object-fit: cover; border-radius: 50%; }
+    </style>
+</head>
+<body>
+
+    <h1>User List</h1>
+    <a href="{% url 'create_user' %}">+ Add New User</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Profile</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}">
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phone }}</td>
+                <td>{{ user.address }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5">No users found.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

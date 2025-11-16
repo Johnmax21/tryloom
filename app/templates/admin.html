@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</head>
+<body class="bg-light-gray">
+
+    <div class="flex min-h-screen">
+
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-lg p-5 border-r border-gray-200">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl font-semibold text-gray-800">Admin Panel</h2>
+            </div>
+            <ul class="space-y-4">
+                <!-- User Profiles Link -->
+                <li>
+                    <a href="/users/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-sky-100 hover:shadow-md transition-all">
+                        <i class="fas fa-users text-xl"></i>
+                        <span>User Profiles</span>
+                    </a>
+                </li>
+                     <li>
+                    <a href="/product/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-sky-100 hover:shadow-md transition-all">
+                        <i class="fas fa-users text-xl"></i>
+                        <span>Products</span>
+                    </a>
+                </li>
+                <!-- Staff Profiles Link -->
+            
+                <li>
+                    <a href="/addproduct/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-sky-100 hover:shadow-md transition-all">
+                        <i class="fas fa-id-badge text-xl"></i>
+                        <span>Add Product</span>
+                    </a>
+                </li>
+                <!-- Product Details Link -->
+              
+                <!-- Admin Profile Link -->
+                
+                <!-- Logout Link -->
+                <li>
+                    <a href="/index/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-red-500 hover:text-white hover:shadow-md transition-all">
+                        <i class="fas fa-sign-out-alt text-xl"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/gallery_list/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-sky-100 hover:shadow-md transition-all">
+                        <i class="fas fa-user-cog text-xl"></i>
+                        <span>Gallery Edit</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/monitor/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-sky-100 hover:shadow-md transition-all">
+                        <i class="fas fa-user-cog text-xl"></i>
+                        <span>Monitor</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 bg-gray-50 p-8">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h1 class="text-3xl font-semibold text-gray-800 mb-6">Welcome to the Admin Panel</h1>
+                <p class="text-lg text-gray-600 mb-6">Manage your users, staff, products, and more.</p>
+
+                <!-- Dashboard Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Card 1 -->
+                    <div class="bg-blue-600 text-white p-6 rounded-lg shadow-md hover:bg-blue-700 transition-all transform hover:scale-105">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <i class="fas fa-users text-3xl"></i>
+                            <h3 class="text-2xl font-semibold">User Profiles</h3>
+                        </div>
+                        <p>Manage and view all user profiles here.</p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-green-600 text-white p-6 rounded-lg shadow-md hover:bg-green-700 transition-all transform hover:scale-105">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <i class="fas fa-id-badge text-3xl"></i>
+                            <h3 class="text-2xl font-semibold">Staff Profiles</h3>
+                        </div>
+                        <p>Manage staff and their details here.</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-purple-600 text-white p-6 rounded-lg shadow-md hover:bg-purple-700 transition-all transform hover:scale-105">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <i class="fas fa-box text-3xl"></i>
+                            <h3 class="text-2xl font-semibold">Product Details</h3>
+                        </div>
+                        <p>View and manage the product catalog here.</p>
+                    </div>
+                </div>
+
+                <!-- Get Started Section -->
+                <div class="mt-10">
+                    <h2 class="text-3xl font-semibold text-gray-800">Get Started</h2>
+                    <p class="text-gray-600 mt-4">Select an option from the sidebar to manage users, staff, products, or your admin profile. Everything is easy to access.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

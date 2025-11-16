@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.title }}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+  /* make pulse less aggressive by temporarily adding class */
+  .heart-pulse {
+    animation: pulse 0.6s ease;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.18); }
+    100% { transform: scale(1); }
+  }
+</style>
+</head>
+
+<body class="bg-gray-100">
+
+<section class="max-w-6xl mx-auto px-6 py-10">
+
+    <!-- Product Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+        <!-- LEFT: Image -->
+        <div>
+            <img src="{{ product.image.url }}" class="w-full h-[480px] object-cover rounded-lg shadow">
+        </div>
+
+        <!-- RIGHT: Details -->
+        <div>
+            <h1 class="text-3xl font-bold mb-2">{{ product.title }}</h1>
+
+            <!-- Rating -->
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-yellow-400 text-xl">
+                    {% for i in "12345" %}
+                        {% if i|add:0 <= avg_rating %}
+                            ★
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                <p class="text-gray-600 text-sm">
+                    {{ avg_rating|floatformat:1 }} / 5 ({{ review_count }} reviews)
+                </p>
+            </div>
+
+            <!-- Price -->
+            <p class="text-2xl font-semibold text-gray-800">₹{{ product.price }}</p>
+
+            <p class="mt-4 text-gray-700">{{ product.description }}</p>
+<div class="relative inline-block">
+  <button
+    type="button"
+    class="wishlist-btn inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/90 shadow-sm hover:scale-105 transition-transform duration-150 focus:outline-none"
+    data-product="{{ product.id }}"
+    aria-label="Toggle wishlist"
+    title="{% if in_wishlist %}Remove from wishlist{% else %}Add to wishlist{% endif %}"
+  >
+    <!-- fa-regular = outline, fa-solid = filled -->
+    <i class="fa-heart fa {% if in_wishlist %}fa-solid text-red-500{% else %}fa-regular text-gray-400{% endif %} text-xl"></i>
+  </button>
+
+  <!-- floating message; initially hidden -->
+  <div class="wishlist-notice absolute left-1/2 -translate-x-1/2 -top-8 pointer-events-none opacity-0 transform scale-90 transition-all duration-300">
+    <div class="bg-black text-white text-xs px-2 py-1 rounded-md shadow-sm"></div>
+  </div>
+</div>
+
+
+            <!-- Add To Cart -->
+            <a href="{% url 'add_cart' product.id %}"
+                class="block mt-4 bg-blue-600 text-white text-center py-3 rounded-md font-semibold">
+                Add to Cart
+            </a>
+
+        </div>
+    </div>
+
+    <!-- REVIEWS SECTION -->
+    <div class="mt-14">
+        <h2 class="text-xl font-bold mb-4">Customer Reviews</h2>
+
+        {% if reviews %}
+            {% for r in reviews %}
+                <div class="border p-4 rounded-lg mb-4 bg-white">
+                    <div class="flex items-center justify-between">
+                        <p class="font-semibold">{{ r.user.username }}</p>
+                        <p class="text-yellow-500">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= r.rating %}
+                                    ★
+                                {% else %}
+                                    ☆
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <p class="text-gray-600 mt-2">{{ r.comment }}</p>
+                    <p class="text-xs text-gray-400 mt-1">{{ r.created_at }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-gray-500">No reviews yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- ADD REVIEW FORM -->
+{% if request.session.email %}
+
+    <div class="mt-10">
+        <h3 class="text-lg font-semibold mb-3">Write a Review</h3>
+
+        <form action="{% url 'add_review' product.id %}" method="POST" class="space-y-4">
+            {% csrf_token %}
+
+           <label class="block font-medium text-gray-700 mb-1">Rating</label>
+
+<div class="flex flex-row-reverse justify-end rating">
+    <!-- 5 Stars -->
+    <input type="radio" name="rating" id="star5" value="5" class="hidden" required>
+    <label for="star5" class="text-3xl cursor-pointer text-gray-300 hover:text-yellow-400">★</label>
+
+    <!-- 4 Stars -->
+    <input type="radio" name="rating" id="star4" value="4" class="hidden">
+    <label for="star4" class="text-3xl cursor-pointer text-gray-300 hover:text-yellow-400">★</label>
+
+    <!-- 3 Stars -->
+    <input type="radio" name="rating" id="star3" value="3" class="hidden">
+    <label for="star3" class="text-3xl cursor-pointer text-gray-300 hover:text-yellow-400">★</label>
+
+    <!-- 2 Stars -->
+    <input type="radio" name="rating" id="star2" value="2" class="hidden">
+    <label for="star2" class="text-3xl cursor-pointer text-gray-300 hover:text-yellow-400">★</label>
+
+    <!-- 1 Star -->
+    <input type="radio" name="rating" id="star1" value="1" class="hidden">
+    <label for="star1" class="text-3xl cursor-pointer text-gray-300 hover:text-yellow-400">★</label>
+</div>
+
+<style>
+    /* highlight stars on selection */
+    .rating input:checked ~ label {
+        color: #fbbf24; /* yellow-400 */
+    }
+</style>
+
+
+            <label class="block font-medium text-gray-700">Your Review</label>
+            <textarea name="comment" rows="3" class="border rounded-md w-full px-3 py-2"
+                placeholder="Share your experience..."></textarea>
+
+            <button class="bg-green-600 text-white px-4 py-2 rounded-md font-semibold">
+                Submit Review
+            </button>
+        </form>
+    </div>
+    {% else %}
+        <p class="mt-6 text-gray-600">
+            <a href="{% url 'login' %}" class="text-blue-600 underline">Login</a> to write a review.
+        </p>
+    {% endif %}
+
+</section>
+<script>
+/* Utility: get CSRF cookie (works with Django) */
+function getCookie(name) {
+  const cookieString = document.cookie || '';
+  const cookies = cookieString.split(';').map(c => c.trim());
+  for (let c of cookies) {
+    if (c.startsWith(name + '=')) return decodeURIComponent(c.substring(name.length + 1));
+  }
+  return null;
+}
+
+/* Helper: show small floating message above the icon */
+function showNotice(containerEl, text) {
+  const noticeWrap = containerEl.querySelector('.wishlist-notice');
+  const msgEl = noticeWrap.querySelector('div');
+  msgEl.textContent = text;
+
+  // show
+  noticeWrap.style.opacity = '1';
+  noticeWrap.style.transform = 'translateX(-50%) translateY(0) scale(1)';
+  // hide after 1.2s
+  setTimeout(() => {
+    noticeWrap.style.opacity = '0';
+    noticeWrap.style.transform = 'translateX(-50%) translateY(-6px) scale(.95)';
+  }, 1200);
+}
+
+/* Main: attach click handlers to all wishlist buttons on the page */
+document.querySelectorAll('.wishlist-btn').forEach(btn => {
+  btn.addEventListener('click', async function (e) {
+    e.preventDefault();
+    const icon = btn.querySelector('i.fa-heart');
+    const pid = btn.getAttribute('data-product');
+    const csrftoken = getCookie('csrftoken');
+
+    // prevent double clicks while request in-flight
+    if (btn.dataset.busy === '1') return;
+    btn.dataset.busy = '1';
+    btn.classList.add('opacity-80');
+
+    try {
+      const res = await fetch(`/wishlist_toggle/${pid}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+        },
+      });
+
+      if (!res.ok) {
+        // optional: show reason from backend
+        const err = await res.json().catch(() => ({}));
+        showNotice(btn, err.error || 'Action failed');
+        return;
+      }
+
+      const data = await res.json();
+
+      // update icon classes: outline <-> solid and color
+      if (data.in_wishlist) {
+        icon.classList.remove('fa-regular', 'text-gray-400');
+        icon.classList.add('fa-solid', 'text-red-500', 'heart-pulse');
+        // remove pulse class after animation
+        setTimeout(() => icon.classList.remove('heart-pulse'), 700);
+        showNotice(btn, data.message || 'Added to wishlist');
+        btn.setAttribute('title', 'Remove from wishlist');
+      } else {
+        icon.classList.remove('fa-solid', 'text-red-500');
+        icon.classList.add('fa-regular', 'text-gray-400');
+        showNotice(btn, data.message || 'Removed from wishlist');
+        btn.setAttribute('title', 'Add to wishlist');
+      }
+
+    } catch (err) {
+      console.error(err);
+      showNotice(btn, 'Network error');
+    } finally {
+      // restore button state
+      btn.dataset.busy = '0';
+      btn.classList.remove('opacity-80');
+    }
+  });
+});
+</script>
+
+
+</body>
+
+
+</html>

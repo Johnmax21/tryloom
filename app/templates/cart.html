@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add to Cart</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .product-image {
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        .product-details {
+            margin-bottom: 20px;
+        }
+        .add-to-cart-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 300px;
+        }
+        .quantity-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .submit-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+        .total-price {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+
+        .back {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+    
+        .back-arrow {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+    
+        .back-arrow:hover {
+            color: #007BFF;
+        }
+    
+        .arrow-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            border-left: 2px solid #333;
+            border-bottom: 2px solid #333;
+            transform: rotate(45deg);
+            transition: border-color 0.3s;
+        }
+    
+        .back-arrow:hover .arrow-icon {
+            border-color: #007BFF;
+        }.back {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+    
+        .back-arrow {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+    
+        .back-arrow:hover {
+            color: #007BFF;
+        }
+    
+        .arrow-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            border-left: 2px solid #333;
+            border-bottom: 2px solid #333;
+            transform: rotate(45deg);
+            transition: border-color 0.3s;
+        }
+    
+        .back-arrow:hover .arrow-icon {
+            border-color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back">
+            <a href="/car/" class="back-arrow">
+                <span class="arrow-icon"></span>
+                Back
+            </a>
+            </div>
+        <div class="product-card">
+           {% if prd.image %}
+    <img src="{{ prd.image.url }}" alt="{{ prd.name }}" class="product-image">
+{% else %}
+    <img src="https://via.placeholder.com/300x250.png?text=No+Image" alt="No Image" class="product-image">
+{% endif %}
+
+            
+            <div class="product-details">
+                <h2>{{ prd.name }}</h2>
+              <p>recurring stock:{{ prd.stock }}</p>
+                <p>price: Rs{{ prd.offer_price }}</p>
+            </div>
+
+            <form method="POST" class="add-to-cart-form">
+                {% csrf_token %}
+                <div>
+                    
+                </div>
+                
+            </div>
+
+            <!-- Hidden field for total amount -->
+            <input type="hidden" id="total-hidden" name="total">
+
+
+
+                <div class="total-price">
+                <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+                    <p id="total-display">Total: Rs0</p> <!-- Display the total in a readable format -->
+                    <p id="date-error" class="error-message"></p> <!-- Error message container -->
+                </div>
+
+                <button type="submit" class="submit-button">Add to Cart</button>
+            </form>
+        </div>
+    </div>
+
+    
+</body>
+<script>
+    const quantityInput = document.getElementById('quantity');
+    const totalDisplay = document.getElementById('total-display');
+    const totalHidden = document.getElementById('total-hidden');
+    const price = {{ prd.offer_price|default:prd.price }};  // fallback to regular price if offer_price is missing
+
+    function updateTotal() {
+        const qty = parseInt(quantityInput.value) || 0;
+        const total = qty * price;
+        totalDisplay.textContent = `Total: Rs${total}`;
+        totalHidden.value = total;
+    }
+
+    quantityInput.addEventListener('input', updateTotal);
+    updateTotal(); // Initial call
+</script>
+
+</html>

@@ -1,0 +1,179 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Wishlist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50">
+
+<section class="max-w-6xl mx-auto px-6 py-10">
+
+  <h2 class="text-3xl font-bold mb-6">My Wishlist</h2>
+
+  {% if wishlist_items %}
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+
+    {% for item in wishlist_items %}
+    <div class="bg-white rounded-xl shadow-md hover:shadow-lg overflow-hidden group relative">
+
+      <!-- Wishlist Heart Button -->
+      <div class="absolute right-3 top-3 z-10">
+        <div class="relative inline-block">
+          <button
+            type="button"
+            class="wishlist-btn inline-flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-sm hover:scale-105 transition-transform"
+            data-product="{{ item.product.id }}"
+          >
+            <i class="fa-heart fa fa-solid text-red-500 text-xl"></i>
+          </button>
+
+          <div class="wishlist-notice absolute left-1/2 -translate-x-1/2 -top-8 pointer-events-none opacity-0 transform scale-90 transition-all duration-300">
+            <div class="bg-black text-white text-xs px-2 py-1 rounded-md shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Image -->
+      <a href="{% url 'product_details' item.product.id %}">
+        <img src="{{ item.product.image.url }}"
+             class="w-full h-60 object-cover group-hover:scale-105 transition">
+      </a>
+
+      <!-- Product Details -->
+      <div class="p-4 text-center">
+        <h3 class="font-semibold truncate">{{ item.product.name }}</h3>
+
+        <p class="text-gray-700 font-bold text-lg mt-1">
+          ₹{{ item.product.offer_price|default:item.product.price }}
+        </p>
+
+        {% if item.product.offer_price %}
+        <p class="line-through text-gray-500 text-sm">₹{{ item.product.price }}</p>
+        {% endif %}
+
+        <form action="{% url 'add_cart' item.product.id %}" method="POST" class="mt-4">
+          {% csrf_token %}
+          <button class="w-full bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-900">
+            Add to Cart
+          </button>
+        </form>
+
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+
+  {% else %}
+
+  <!-- Empty Wishlist -->
+  <div class="text-center py-20">
+    <img src="{% static 'images/empty_wishlist.png' %}" class="mx-auto w-44 opacity-80">
+
+    <h3 class="text-2xl font-semibold mt-4">Your Wishlist is Empty</h3>
+    <p class="text-gray-500 mt-2">
+      Save items you like here and shop later.
+    </p>
+
+    <a href="/" class="mt-6 inline-block bg-black text-white px-6 py-3 rounded-lg">Continue Shopping</a>
+  </div>
+
+  {% endif %}
+
+</section>
+
+<!-- Include your AJAX script here -->
+<script>
+/* Utility: get CSRF cookie (works with Django) */
+function getCookie(name) {
+  const cookieString = document.cookie || '';
+  const cookies = cookieString.split(';').map(c => c.trim());
+  for (let c of cookies) {
+    if (c.startsWith(name + '=')) return decodeURIComponent(c.substring(name.length + 1));
+  }
+  return null;
+}
+
+/* Helper: show small floating message above the icon */
+function showNotice(containerEl, text) {
+  const noticeWrap = containerEl.querySelector('.wishlist-notice');
+  const msgEl = noticeWrap.querySelector('div');
+  msgEl.textContent = text;
+
+  // show
+  noticeWrap.style.opacity = '1';
+  noticeWrap.style.transform = 'translateX(-50%) translateY(0) scale(1)';
+  // hide after 1.2s
+  setTimeout(() => {
+    noticeWrap.style.opacity = '0';
+    noticeWrap.style.transform = 'translateX(-50%) translateY(-6px) scale(.95)';
+  }, 1200);
+}
+
+/* Main: attach click handlers to all wishlist buttons on the page */
+document.querySelectorAll('.wishlist-btn').forEach(btn => {
+  btn.addEventListener('click', async function (e) {
+    e.preventDefault();
+    const icon = btn.querySelector('i.fa-heart');
+    const pid = btn.getAttribute('data-product');
+    const csrftoken = getCookie('csrftoken');
+
+    // prevent double clicks while request in-flight
+    if (btn.dataset.busy === '1') return;
+    btn.dataset.busy = '1';
+    btn.classList.add('opacity-80');
+
+    try {
+      const res = await fetch(`/wishlist_toggle/${pid}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+        },
+      });
+
+      if (!res.ok) {
+        // optional: show reason from backend
+        const err = await res.json().catch(() => ({}));
+        showNotice(btn, err.error || 'Action failed');
+        return;
+      }
+
+      const data = await res.json();
+
+      // update icon classes: outline <-> solid and color
+      if (data.in_wishlist) {
+        icon.classList.remove('fa-regular', 'text-gray-400');
+        icon.classList.add('fa-solid', 'text-red-500', 'heart-pulse');
+        // remove pulse class after animation
+        setTimeout(() => icon.classList.remove('heart-pulse'), 700);
+        showNotice(btn, data.message || 'Added to wishlist');
+        btn.setAttribute('title', 'Remove from wishlist');
+      } else {
+        icon.classList.remove('fa-solid', 'text-red-500');
+        icon.classList.add('fa-regular', 'text-gray-400');
+        showNotice(btn, data.message || 'Removed from wishlist');
+        btn.setAttribute('title', 'Add to wishlist');
+      }
+
+    } catch (err) {
+      console.error(err);
+      showNotice(btn, 'Network error');
+    } finally {
+      // restore button state
+      btn.dataset.busy = '0';
+      btn.classList.remove('opacity-80');
+    }
+  });
+});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 py-10">
+
+<div class="max-w-lg mx-auto bg-white rounded-2xl shadow-md p-6 text-center">
+
+    <!-- Avatar -->
+    <div class="w-28 h-28 mx-auto mb-4 rounded-full border-4 border-green-200 overflow-hidden">
+        {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}" class="w-full h-full object-cover">
+        {% else %}
+            <div class="w-full h-full bg-green-600 text-white text-3xl flex items-center justify-center">
+                {{ profile.usernname|first|upper }}
+            </div>
+        {% endif %}
+    </div>
+
+    <h2 class="text-2xl font-bold">{{ profile.usernname }}</h2>
+    <p class="text-gray-500">{{ profile.email }}</p>
+
+    <div class="mt-6 text-left space-y-2">
+        <p><strong class="text-gray-700">Phone:</strong> {{ profile.phone }}</p>
+        <p><strong class="text-gray-700">Address:</strong> {{ profile.address }}</p>
+        <p><strong class="text-gray-700">Gender:</strong> {{ profile.gender }}</p>
+    </div>
+
+    <button 
+        onclick="document.getElementById('editForm').classList.remove('hidden')"
+        class="mt-6 bg-black text-white px-5 py-2 rounded-lg">
+        Edit Profile
+    </button>
+    <button 
+    onclick="window.location.href='/logout/'"
+    class="mt-6 bg-red-600 text-white px-5 py-2 rounded-lg">
+    Logout
+</button>
+
+
+</div>
+
+
+<!-- ======================================== -->
+<!--   Edit Form Popup                        -->
+<!-- ======================================== -->
+
+<div id="editForm" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+    <div class="bg-white p-6 rounded-xl w-full max-w-lg">
+
+        <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
+
+        <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="space-y-4">
+
+                <input type="text" name="usernname" value="{{ profile.usernname }}" 
+                       class="w-full border p-3 rounded-md" placeholder="Full Name">
+
+                <input type="email" name="email" value="{{ profile.email }}" 
+                       class="w-full border p-3 rounded-md">
+
+                <input type="text" name="phone" value="{{ profile.phone }}" 
+                       class="w-full border p-3 rounded-md" placeholder="Phone">
+
+                <input type="text" name="address" value="{{ profile.address }}" 
+                       class="w-full border p-3 rounded-md" placeholder="Address">
+
+                <select name="gender" class="w-full border p-3 rounded-md">
+                    <option value="">Select Gender</option>
+                    <option value="Male" {% if profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                </select>
+
+                <label class="block text-gray-700 font-semibold">Profile Picture</label>
+                <input type="file" name="profile_picture" class="w-full border p-2 rounded-md">
+            </div>
+
+            <div class="flex justify-between mt-6">
+                <button class="bg-black text-white px-5 py-2 rounded-lg">Save</button>
+
+                <button type="button"
+                        onclick="document.getElementById('editForm').classList.add('hidden')"
+                        class="bg-gray-300 px-5 py-2 rounded-lg">
+                    Cancel
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
