@@ -135,15 +135,14 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'tryloomfabrics@gmail.com'
 EMAIL_HOST_PASSWORD = 'lsjz ksqq cjhz qkca'
 EMAIL_USE_TLS = True 
+STATIC_URL = '/static/'
 
-STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    BASE_DIR / "static",
 ]
-STATIC_URL = '/static/'
-STATICFILES_DIRS=[os.path.join(BASE_DIR,'staticfiles')]
-MEDIA_URL='/media/'
-MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 
 
 RAZOR_KEY_ID ='rzp_live_RYNqw9fDePuWLu'
